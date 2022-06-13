@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <canvas id="canvas2" style="background: #ccc"></canvas>
+<script type="module">
+  import { Act, CanvasEngine } from '../dist/index.mjs'
+  const engine = new CanvasEngine({
+    w: '600',
+    h: '600',
+    canvasTarget: 'canvas2',
+  })
+  const act = new Act({
+    x: 100,
+    y: 100,
+    radius: 50,
+  })
+  engine.fill(act, {
+    color: 'red',
+  })
+</script>
+</body>
+</html>
