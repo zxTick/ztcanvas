@@ -14,14 +14,16 @@
   </head>
 
   <body>
-    <canvas id="canvas" style="background-color: rgb(138, 138, 138)"></canvas>
+    <canvas id="canvas1" style="background-color: rgb(138, 138, 138)"></canvas>
 
     <script type="module">
       import { CanvasEngine, Rect } from "../dist/index.js";
       const engine = new CanvasEngine({
         w: "600",
         h: "600",
+        canvasTarget: "canvas1",
       });
+
       const rect1 = new Rect({
         x: 10,
         y: 10,

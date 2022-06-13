@@ -76,9 +76,7 @@ export class CanvasEngine {
       const events = this.eventsMap.get(eventType);
       events?.push(noop);
     } else {
-      this.eventsMap.set(eventType, []);
-      const events = this.eventsMap.get(eventType);
-      events?.push(noop);
+      this.eventsMap.set(eventType, [noop]);
       this.rawCanvasDom.addEventListener(eventType, (e) => {
         const events = this.eventsMap.get(eventType);
         events?.forEach((fn) => {
