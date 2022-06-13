@@ -73,8 +73,8 @@ export class CanvasEngine {
     };
 
     if (this.eventsMap.has(eventType)) {
-      const events = this.eventsMap.get(eventType);
-      events?.add(noop);
+      const eventSet = this.eventsMap.get(eventType);
+      eventSet?.add(noop);
     } else {
       this.eventsMap.set(eventType, new Set([noop]));
       this.rawCanvasDom.addEventListener(eventType, (e) => {
@@ -84,5 +84,10 @@ export class CanvasEngine {
         });
       });
     }
+
+    return () => {
+      const eventSet = this.eventsMap.get(eventType);
+      eventSet?.delete(noop);
+    };
   }
 }

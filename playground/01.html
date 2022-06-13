@@ -17,7 +17,7 @@
     <canvas id="canvas1" style="background-color: rgb(138, 138, 138)"></canvas>
 
     <script type="module">
-      import { CanvasEngine, Rect } from "../dist/index.js";
+      import { CanvasEngine, Rect } from "../dist/index.mjs";
       const engine = new CanvasEngine({
         w: "600",
         h: "600",
@@ -32,6 +32,7 @@
       });
       engine.fill(rect1, { color: "red" });
       engine.addEventListener(rect1, "click", function (e) {
+        console.log(e); 
         console.log("成功点击1");
       });
 
@@ -42,9 +43,11 @@
         h: 100,
       });
       engine.fill(rect2, { color: "#000" });
-      engine.addEventListener(rect2, "click", function (e) {
+      const stopEvent = engine.addEventListener(rect2, "click", function (e) {
+        console.log(e);
         console.log("成功点击2");
       });
+      stopEvent();
     </script>
   </body>
 </html>
