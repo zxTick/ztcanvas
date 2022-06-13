@@ -1,4 +1,5 @@
 import { Rect, RectOptions } from "./rect";
+import { baseShape } from "./types/shape";
 
 // 1. 链表模拟图层
 // 删除一个元素就是全部重新渲染
@@ -12,8 +13,8 @@ export interface CanvasEngineProps {
 export interface DrawDependencyGraphMap {
   id: symbol;
   path2D: Path2D;
-  // todo
-  figureInformation: RectOptions;
+  // todo 这个类型要换
+  figureInformation: baseShape;
 }
 
 export interface FillOptions {
