@@ -1,5 +1,8 @@
 import { Rect, RectOptions } from "./rect";
 
+// 1. 链表模拟图层
+// 删除一个元素就是全部重新渲染
+
 export interface CanvasEngineProps {
   w?: string;
   h?: string;
@@ -24,9 +27,10 @@ export class CanvasEngine {
     new Map();
   private rawCanvasDom: HTMLCanvasElement;
   public ctx!: CanvasRenderingContext2D;
-  eventsMap: Map<string, Set<EventFn>> = new Map();
+  public eventsMap: Map<string, Set<EventFn>> = new Map();
+  private renderQueue: { graphical: Rect; options: FillOptions }[] = [];
 
-  constructor(options: CanvasEngineProps) {
+  constructor(public options: CanvasEngineProps) {
     this.rawCanvasDom = this.initCanvasSize(options);
     this.initCtx();
   }
@@ -58,6 +62,10 @@ export class CanvasEngine {
     this.ctx.fillStyle = color || "";
     this.ctx.fill(graphical.path2D);
     this.drawDependencyGraphsMap.set(graphical.id, graphical);
+    this.renderQueue.push({
+      graphical,
+      options,
+    });
   }
 
   addEventListener(graphical: Rect, eventType: string, fn: EventFn) {
@@ -89,5 +97,24 @@ export class CanvasEngine {
       const eventSet = this.eventsMap.get(eventType);
       eventSet?.delete(noop);
     };
+  }
+  clear(graphical: Rect) {
+    const index = this.renderQueue.findIndex(
+      (it) => it.graphical.id === graphical.id
+    );
+    if (index !== -1) {
+      this.renderQueue.splice(index, 1);
+      this.reload();
+    }
+  }
+  reload() {
+    this.clearView();
+    this.renderQueue.forEach((render) => {
+      this.fill(render.graphical, render.options);
+    });
+  }
+
+  clearView() {
+    this.ctx.clearRect(0, 0, Number(this.options.w), Number(this.options.h));
   }
 }
