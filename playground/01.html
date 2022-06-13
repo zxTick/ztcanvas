@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>Document</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas
+    id="canvas"
+    style="background-color: rgb(138, 138, 138)"
+  ></canvas>
+
+  <script>
+    document.getElementById("canvas").setAttribute("width", 600)
+    document.getElementById("canvas").setAttribute("height", 600)
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    const path1 = new Path2D();
+
+    path1.rect(10, 10, 100, 100);
+    ctx.fillStyle = "red";
+    ctx.fill(path1);
+
+    const path2 = new Path2D();
+    path2.moveTo(220, 60);
+    path2.arc(170, 60, 50, 0, 2 * Math.PI);
+    ctx.stroke(path2);
+
+
+    canvas.addEventListener("click", function (e) {
+      ctx.clearRect(10, 10, 100, 100)
+      console.log(ctx.isPointInPath(path1, e.clientX, e.clientY));
+      console.log(ctx.isPointInPath(path2, e.clientX, e.clientY));
+    });
+  </script>
+</body>
+
+</html>
