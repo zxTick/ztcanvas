@@ -24,7 +24,7 @@ export class CanvasEngine {
     new Map();
   private rawCanvasDom: HTMLCanvasElement;
   public ctx!: CanvasRenderingContext2D;
-  eventsMap: Map<string, EventFn[]> = new Map();
+  eventsMap: Map<string, Set<EventFn>> = new Map();
 
   constructor(options: CanvasEngineProps) {
     this.rawCanvasDom = this.initCanvasSize(options);
@@ -74,9 +74,9 @@ export class CanvasEngine {
 
     if (this.eventsMap.has(eventType)) {
       const events = this.eventsMap.get(eventType);
-      events?.push(noop);
+      events?.add(noop);
     } else {
-      this.eventsMap.set(eventType, [noop]);
+      this.eventsMap.set(eventType, new Set([noop]));
       this.rawCanvasDom.addEventListener(eventType, (e) => {
         const events = this.eventsMap.get(eventType);
         events?.forEach((fn) => {
