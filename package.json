@@ -2,6 +2,7 @@
   "name": "canvas-engine",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "scripts": {
     "build": "unbuild",
     "stub": "unbuild --stub"

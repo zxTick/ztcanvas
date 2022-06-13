@@ -7,7 +7,7 @@ export interface CanvasEngineProps {
 }
 
 export interface DrawDependencyGraphMap {
-  id: string;
+  id: symbol;
   path2D: Path2D;
   // todo
   figureInformation: RectOptions;
@@ -20,12 +20,11 @@ export interface FillOptions {
 type EventFn = (event: Event) => void;
 
 export class CanvasEngine {
-  private drawDependencyGraphsMap: Map<string, DrawDependencyGraphMap> =
+  private drawDependencyGraphsMap: Map<symbol, DrawDependencyGraphMap> =
     new Map();
   private rawCanvasDom: HTMLCanvasElement;
   public ctx!: CanvasRenderingContext2D;
   eventsMap: Map<string, EventFn[]> = new Map();
-  private eventsEMap: Map<string, any> = new Map<string, any>();
 
   constructor(options: CanvasEngineProps) {
     this.rawCanvasDom = this.initCanvasSize(options);
@@ -63,28 +62,28 @@ export class CanvasEngine {
 
   addEventListener(graphical: Rect, eventType: string, fn: EventFn) {
     const noop = (e: any) => {
-      return () => {
-        const isHas = this.ctx.isPointInPath(
-          graphical.path2D,
-          e.clientX,
-          e.clientY
-        );
-        if (isHas) {
-          fn(e);
-        }
-      };
+      const isHas = this.ctx.isPointInPath(
+        graphical.path2D,
+        e.clientX,
+        e.clientY
+      );
+      if (isHas) {
+        fn(e);
+      }
     };
 
     if (this.eventsMap.has(eventType)) {
       const events = this.eventsMap.get(eventType);
-      const e = this.eventsEMap.get(eventType);
-      events?.push(noop(e));
+      events?.push(noop);
     } else {
+      this.eventsMap.set(eventType, []);
+      const events = this.eventsMap.get(eventType);
+      events?.push(noop);
       this.rawCanvasDom.addEventListener(eventType, (e) => {
-        this.eventsEMap.set(eventType, e);
-        this.eventsMap.set(eventType, []);
         const events = this.eventsMap.get(eventType);
-        events?.push(noop(e));
+        events?.forEach((fn) => {
+          fn(e);
+        });
       });
     }
   }

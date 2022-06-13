@@ -1,5 +1,3 @@
-import { nanoid } from "nanoid";
-
 export interface RectOptions {
   x: number;
   y: number;
@@ -9,7 +7,7 @@ export interface RectOptions {
 
 export class Rect {
   path2D: Path2D = new Path2D();
-  id: string = nanoid();
+  id: symbol = Symbol();
   figureInformation: RectOptions;
   constructor(options: RectOptions) {
     this.machiningGraphics(options);
