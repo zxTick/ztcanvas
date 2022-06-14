@@ -1,4 +1,5 @@
 import { Rect, RectOptions } from "./rect";
+import { EventFn, EventName } from "./types/event";
 import { baseShape } from "./types/shape";
 
 // 1. 链表模拟图层
@@ -20,8 +21,6 @@ export interface DrawDependencyGraphMap {
 export interface FillOptions {
   color?: string;
 }
-
-type EventFn = (event: Event) => void;
 
 export class CanvasEngine {
   // 绘画图
@@ -63,18 +62,24 @@ export class CanvasEngine {
     return this.rawCanvasDom;
   }
 
-  public fill(graphical: Rect, options: FillOptions) {
+  public fill(
+    graphical: Rect,
+    options: FillOptions,
+    isReload: boolean = false
+  ) {
     const { color } = options;
     this.ctx.fillStyle = color || "";
     this.ctx.fill(graphical.path2D);
-    this.drawDependencyGraphsMap.set(graphical.id, graphical);
-    this.renderQueue.push({
-      graphical,
-      options,
-    });
+    if (!isReload) {
+      this.drawDependencyGraphsMap.set(graphical.id, graphical);
+      this.renderQueue.push({
+        graphical,
+        options,
+      });
+    }
   }
 
-  addEventListener(graphical: Rect, eventType: string, fn: EventFn) {
+  addEventListener(graphical: Rect, eventType: EventName, fn: EventFn) {
     const noop = (e: any) => {
       const isHas = this.ctx.isPointInPath(
         graphical.path2D,
@@ -99,6 +104,12 @@ export class CanvasEngine {
       });
     }
 
+    let eventsNoopSet = graphical.noop[eventType];
+    if (!eventsNoopSet) {
+      eventsNoopSet = graphical.noop[eventType] = new Set();
+    }
+    eventsNoopSet.add(noop);
+
     return () => {
       const eventSet = this.eventsMap.get(eventType);
       eventSet?.delete(noop);
@@ -108,15 +119,34 @@ export class CanvasEngine {
     const index = this.renderQueue.findIndex(
       (it) => it.graphical.id === graphical.id
     );
-    if (index !== -1) {
-      this.renderQueue.splice(index, 1);
-      this.reload();
+    if (index === -1) return;
+    this.renderQueue.splice(index, 1);
+    this.clearEvents(graphical);
+    this.reload();
+  }
+  clearEvents(graphical: Rect, eventType?: EventName) {
+    const { noop } = graphical;
+    if (eventType) {
+      const selfEventSet = noop[eventType];
+      const eventSet = this.eventsMap.get(eventType);
+      if (!selfEventSet || !eventSet) return;
+      selfEventSet.forEach((fn) => {
+        eventSet.delete(fn);
+      });
+    } else {
+      Object.keys(noop).forEach((eventName) => {
+        const selfEventSet = noop[eventName as EventName];
+        const eventSet = this.eventsMap.get(eventName);
+        selfEventSet?.forEach((fn) => {
+          eventSet?.delete(fn);
+        });
+      });
     }
   }
   reload() {
     this.clearView();
     this.renderQueue.forEach((render) => {
-      this.fill(render.graphical, render.options);
+      this.fill(render.graphical, render.options, true);
     });
   }
 

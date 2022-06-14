@@ -1,5 +1,6 @@
 import { FillOptions } from "./canvasEngine";
 import { CanvasEngine } from "./canvasEngine";
+import { Noop } from "./types/event";
 import { RectShape, ShapeType } from "./types/shape";
 
 export interface RectOptions {
@@ -14,6 +15,7 @@ export class Rect {
   path2D: Path2D = new Path2D();
   id: symbol = Symbol();
   figureInformation!: RectShape;
+  noop: Noop = {};
   constructor(options: RectOptions) {
     this.machiningGraphics(options);
     this.injectFigureInformation(options);
