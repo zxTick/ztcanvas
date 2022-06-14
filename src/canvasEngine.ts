@@ -24,11 +24,16 @@ export interface FillOptions {
 type EventFn = (event: Event) => void;
 
 export class CanvasEngine {
+  // 绘画图
   private drawDependencyGraphsMap: Map<symbol, DrawDependencyGraphMap> =
     new Map();
+  // canvas dom
   private rawCanvasDom: HTMLCanvasElement;
+  // canvas ctx
   public ctx!: CanvasRenderingContext2D;
+  // 事件map
   public eventsMap: Map<string, Set<EventFn>> = new Map();
+  // 渲染队列
   private renderQueue: { graphical: Rect; options: FillOptions }[] = [];
 
   constructor(public options: CanvasEngineProps) {
