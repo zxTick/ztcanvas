@@ -121,27 +121,23 @@ export class CanvasEngine {
     );
     if (index === -1) return;
     this.renderQueue.splice(index, 1);
-    this.clearEvents(graphical);
+    this.emptyEvents(graphical);
     this.reload();
   }
-  clearEvents(graphical: Rect, eventType?: EventName) {
+  emptyEvents(graphical: Rect) {
     const { noop } = graphical;
-    if (eventType) {
-      const selfEventSet = noop[eventType];
-      const eventSet = this.eventsMap.get(eventType);
-      if (!selfEventSet || !eventSet) return;
-      selfEventSet.forEach((fn) => {
-        eventSet.delete(fn);
-      });
-    } else {
-      Object.keys(noop).forEach((eventName) => {
-        const selfEventSet = noop[eventName as EventName];
-        const eventSet = this.eventsMap.get(eventName);
-        selfEventSet?.forEach((fn) => {
-          eventSet?.delete(fn);
-        });
-      });
-    }
+    Object.keys(noop).forEach((eventName) => {
+      this.clearEvents(graphical, eventName as EventName);
+    });
+  }
+  clearEvents(graphical: Rect, eventType: EventName) {
+    const { noop } = graphical;
+    const selfEventSet = noop[eventType];
+    const eventSet = this.eventsMap.get(eventType);
+    if (!selfEventSet || !eventSet) return;
+    selfEventSet.forEach((fn) => {
+      eventSet.delete(fn);
+    });
   }
   reload() {
     this.clearView();
