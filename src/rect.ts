@@ -9,6 +9,7 @@ export interface RectOptions {
   shape: "";
   w: number;
   h: number;
+  zIndex: number;
 }
 
 export class Rect {
@@ -16,9 +17,11 @@ export class Rect {
   id: symbol = Symbol();
   figureInformation!: RectShape;
   noop: Noop = {};
+  zIndex: number = -1;
   constructor(options: RectOptions) {
     this.machiningGraphics(options);
     this.injectFigureInformation(options);
+    this.zIndex = options.zIndex || -1;
   }
 
   private machiningGraphics(options: RectOptions) {

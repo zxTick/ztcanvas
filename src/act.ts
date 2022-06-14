@@ -7,6 +7,7 @@ export interface ActOptions {
   x: number;
   y: number;
   radius: number;
+  zIndex: number;
 }
 
 export class Act {
@@ -14,9 +15,11 @@ export class Act {
   id = Symbol("Act");
   figureInformation!: ActShape;
   noop: Noop = {};
+  zIndex: number = -1
   constructor(options: ActOptions) {
     this.injectFigureInformation(options);
     this.machiningGraphics(options);
+    this.zIndex = options.zIndex || -1
   }
 
   machiningGraphics(options: ActOptions) {

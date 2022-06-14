@@ -4,14 +4,14 @@ export enum ShapeType {
 }
 
 export interface Size {
-  w: number
-  h: number
+  w: number;
+  h: number;
 }
 
 export interface baseShape {
-  shape: ShapeType
-  x: number
-  y: number
+  shape: ShapeType;
+  x: number;
+  y: number;
 }
 
 export interface RectShape extends baseShape, Size {}
@@ -21,5 +21,5 @@ export interface RectShape extends baseShape, Size {}
  * @param {number} radius 半径
  */
 export interface ActShape extends baseShape {
-  radius: number
+  radius: number;
 }

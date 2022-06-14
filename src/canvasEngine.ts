@@ -2,8 +2,9 @@ import { Rect, RectOptions } from "./rect";
 import { EventFn, EventName } from "./types/event";
 import { baseShape } from "./types/shape";
 
-// 1. 链表模拟图层
-// 删除一个元素就是全部重新渲染
+// todo
+// 移动元素
+// 切换图层
 
 export interface CanvasEngineProps {
   w?: string;
@@ -23,6 +24,8 @@ export interface FillOptions {
 }
 
 export class CanvasEngine {
+  public canvasHeight!: number;
+  public canvasWidth!: number;
   // 绘画图
   private drawDependencyGraphsMap: Map<symbol, DrawDependencyGraphMap> =
     new Map();
@@ -49,10 +52,17 @@ export class CanvasEngine {
     if (canvasDom) {
       canvasDom.setAttribute("width", w || "500");
       canvasDom.setAttribute("height", h || "500");
+      this.canvasWidth = Number(w || "500");
+      this.canvasHeight = Number(h || "500");
     } else {
       throw new Error("请选择正确的 canvas id 获取dom元素");
     }
     return canvasDom;
+  }
+  private sortRenderQueue() {
+    this.renderQueue.sort((a, b) => {
+      return a.graphical.zIndex - b.graphical.zIndex;
+    });
   }
   private initCtx() {
     this.ctx = this.rawCanvasDom.getContext("2d") as CanvasRenderingContext2D;
@@ -67,19 +77,18 @@ export class CanvasEngine {
     options: FillOptions,
     isReload: boolean = false
   ) {
-    const { color } = options;
-    this.ctx.fillStyle = color || "";
-    this.ctx.fill(graphical.path2D);
+    // graphical.fill(this, options);
     if (!isReload) {
       this.drawDependencyGraphsMap.set(graphical.id, graphical);
       this.renderQueue.push({
         graphical,
         options,
       });
+      this.reload();
     }
   }
 
-  addEventListener(graphical: Rect, eventType: EventName, fn: EventFn) {
+  public addEventListener(graphical: Rect, eventType: EventName, fn: EventFn) {
     const noop = (e: any) => {
       const isHas = this.ctx.isPointInPath(
         graphical.path2D,
@@ -115,7 +124,7 @@ export class CanvasEngine {
       eventSet?.delete(noop);
     };
   }
-  clear(graphical: Rect) {
+  public clear(graphical: Rect) {
     const index = this.renderQueue.findIndex(
       (it) => it.graphical.id === graphical.id
     );
@@ -124,13 +133,13 @@ export class CanvasEngine {
     this.emptyEvents(graphical);
     this.reload();
   }
-  emptyEvents(graphical: Rect) {
+  public emptyEvents(graphical: Rect) {
     const { noop } = graphical;
     Object.keys(noop).forEach((eventName) => {
       this.clearEvents(graphical, eventName as EventName);
     });
   }
-  clearEvents(graphical: Rect, eventType: EventName) {
+  public clearEvents(graphical: Rect, eventType: EventName) {
     const { noop } = graphical;
     const selfEventSet = noop[eventType];
     const eventSet = this.eventsMap.get(eventType);
@@ -139,14 +148,21 @@ export class CanvasEngine {
       eventSet.delete(fn);
     });
   }
-  reload() {
+  public reload() {
     this.clearView();
+    this.sortRenderQueue();
     this.renderQueue.forEach((render) => {
-      this.fill(render.graphical, render.options, true);
+      render.graphical.fill(this, render.options);
+      // this.fill(render.graphical, render.options, true);
     });
   }
 
-  clearView() {
-    this.ctx.clearRect(0, 0, Number(this.options.w), Number(this.options.h));
+  public clearView() {
+    this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+  }
+
+  public modifyShapeLayer(graphical: Rect, zIndex: number) {
+    graphical.zIndex = zIndex
+    this.reload()
   }
 }
