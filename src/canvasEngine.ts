@@ -110,6 +110,31 @@ export class CanvasEngine {
   }
 
   public addEventListener(graphical: Rect, eventType: EventName, fn: EventFn) {
+    const noop = this.distributionNoop(graphical, fn)
+    if (this.eventsMap.has(eventType)) {
+      const eventSet = this.eventsMap.get(eventType)
+      eventSet?.add(noop!)
+    } else {
+      this.eventsMap.set(eventType, new Set([noop!]))
+      this.rawCanvasDom.addEventListener(eventType, e => {
+        const events = this.eventsMap.get(eventType)
+        events?.forEach(fn => {
+          fn(e)
+        })
+      })
+    }
+
+    let eventsNoopSet = graphical.noop[eventType]
+    if (!eventsNoopSet) eventsNoopSet = graphical.noop[eventType] = new Set()
+
+    eventsNoopSet.add(noop!)
+
+    return () => {
+      const eventSet = this.eventsMap.get(eventType)
+      eventSet?.delete(noop)
+    }
+  }
+  private distributionNoop(graphical: Rect, fn: EventFn) {
     let noop: EventFn
     switch (graphical.shape) {
       case 'Rect':
@@ -137,28 +162,7 @@ export class CanvasEngine {
         break
     }
 
-    if (this.eventsMap.has(eventType)) {
-      const eventSet = this.eventsMap.get(eventType)
-      eventSet?.add(noop!)
-    } else {
-      this.eventsMap.set(eventType, new Set([noop!]))
-      this.rawCanvasDom.addEventListener(eventType, e => {
-        const events = this.eventsMap.get(eventType)
-        events?.forEach(fn => {
-          fn(e)
-        })
-      })
-    }
-
-    let eventsNoopSet = graphical.noop[eventType]
-    if (!eventsNoopSet) eventsNoopSet = graphical.noop[eventType] = new Set()
-
-    eventsNoopSet.add(noop!)
-
-    return () => {
-      const eventSet = this.eventsMap.get(eventType)
-      eventSet?.delete(noop)
-    }
+    return noop!
   }
 
   public clear(graphical: Rect) {
