@@ -2,7 +2,7 @@
 
 a framework to help you build your canvas library easily
 
-you can click the link below to access out docs
+you can click 👇 to access our docs
 
 [canvas-engine-docs](https://canvas-engine-docs.netlify.app/)
 
