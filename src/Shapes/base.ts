@@ -4,7 +4,7 @@ import type { EventFn, EventName } from '../types'
 export abstract class BaseShape<S, T> {
   path2D: Path2D = new Path2D()
   abstract id: symbol
-  protected abstract shapeInfo: S
+  abstract shapeInfo: S
   zIndex = -1
   events = {} as Record<EventName, Set<EventFn>>
   constructor() { }
