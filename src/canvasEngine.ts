@@ -24,12 +24,24 @@ export interface RenderOptions {
   mode?: 'fill' | 'stroke'
 }
 
+export interface CanvasDomInfo {
+  canvasHeight: number
+  canvasWidth: number
+  leftOffset: number
+  topOffset: number
+}
+
 export class CanvasEngine {
-  public canvasHeight!: number
-  public canvasWidth!: number
+  public canvasDomInfo: CanvasDomInfo = {
+    canvasHeight: 0,
+    canvasWidth: 0,
+    leftOffset: 0,
+    topOffset: 0
+  }
+
   // 绘画图
-  private drawDependencyGraphsMap: Map<symbol, DrawDependencyGraphMap>
-    = new Map()
+  private drawDependencyGraphsMap: Map<symbol, DrawDependencyGraphMap> =
+    new Map()
 
   // canvas dom
   private rawCanvasDom: HTMLCanvasElement
@@ -48,19 +60,28 @@ export class CanvasEngine {
   private initCanvasSize(options: CanvasEngineProps) {
     const { w, h, canvasTarget } = options
     const canvasDom = document.getElementById(
-      canvasTarget || 'canvas',
+      canvasTarget || 'canvas'
     ) as HTMLCanvasElement
 
     if (canvasDom) {
       canvasDom.setAttribute('width', w || '500')
       canvasDom.setAttribute('height', h || '500')
-      this.canvasWidth = Number(w || '500')
-      this.canvasHeight = Number(h || '500')
-    }
-    else {
+    } else {
       throw new Error('请选择正确的 canvas id 获取dom元素')
     }
+    this.initCanvasDomInfo(options, canvasDom)
     return canvasDom
+  }
+  private initCanvasDomInfo(
+    options: CanvasEngineProps,
+    canvasDom: HTMLCanvasElement
+  ) {
+    const { w, h } = options
+    const { left, top } = canvasDom.getClientRects()[0]
+    this.canvasDomInfo.canvasWidth = Number(w || '500')
+    this.canvasDomInfo.canvasHeight = Number(h || '500')
+    this.canvasDomInfo.leftOffset = left
+    this.canvasDomInfo.topOffset = top
   }
 
   private sortRenderQueue() {
@@ -77,51 +98,62 @@ export class CanvasEngine {
     return this.rawCanvasDom
   }
 
-  public render(
-    graphical: Rect,
-    options: RenderOptions,
-    isReload = false,
-  ) {
+  public render(graphical: Rect, options: RenderOptions, isReload = false) {
     if (!isReload) {
       this.drawDependencyGraphsMap.set(graphical.id, graphical)
       this.renderQueue.push({
         graphical,
-        options,
+        options
       })
       this.reload()
     }
   }
 
   public addEventListener(graphical: Rect, eventType: EventName, fn: EventFn) {
-    const noop = (e: any) => {
-      const isHas = this.ctx.isPointInPath(
-        graphical.path2D,
-        e.clientX,
-        e.clientY,
-      )
-      if (isHas)
-        fn(e)
+    let noop: EventFn
+    switch (graphical.shape) {
+      case 'Rect':
+      case 'Act':
+        noop = (e: any) => {
+          const { leftOffset, topOffset } = this.canvasDomInfo
+          const isHas = this.ctx.isPointInPath(
+            graphical.path2D,
+            (e as any).clientX - leftOffset,
+            (e as any).clientY - topOffset
+          )
+          if (isHas) fn(e)
+        }
+        break
+      case 'Line':
+        noop = (e: any) => {
+          const { leftOffset, topOffset } = this.canvasDomInfo
+          const isHas = this.ctx.isPointInStroke(
+            graphical.path2D,
+            (e as any).clientX - leftOffset,
+            (e as any).clientY - topOffset
+          )
+          if (isHas) fn(e)
+        }
+        break
     }
 
     if (this.eventsMap.has(eventType)) {
       const eventSet = this.eventsMap.get(eventType)
-      eventSet?.add(noop)
-    }
-    else {
-      this.eventsMap.set(eventType, new Set([noop]))
-      this.rawCanvasDom.addEventListener(eventType, (e) => {
+      eventSet?.add(noop!)
+    } else {
+      this.eventsMap.set(eventType, new Set([noop!]))
+      this.rawCanvasDom.addEventListener(eventType, e => {
         const events = this.eventsMap.get(eventType)
-        events?.forEach((fn) => {
+        events?.forEach(fn => {
           fn(e)
         })
       })
     }
 
     let eventsNoopSet = graphical.noop[eventType]
-    if (!eventsNoopSet)
-      eventsNoopSet = graphical.noop[eventType] = new Set()
+    if (!eventsNoopSet) eventsNoopSet = graphical.noop[eventType] = new Set()
 
-    eventsNoopSet.add(noop)
+    eventsNoopSet.add(noop!)
 
     return () => {
       const eventSet = this.eventsMap.get(eventType)
@@ -131,7 +163,7 @@ export class CanvasEngine {
 
   public clear(graphical: Rect) {
     const index = this.renderQueue.findIndex(
-      it => it.graphical.id === graphical.id,
+      it => it.graphical.id === graphical.id
     )
     if (index === -1) return
     this.renderQueue.splice(index, 1)
@@ -141,7 +173,7 @@ export class CanvasEngine {
 
   public emptyEvents(graphical: Rect) {
     const { noop } = graphical
-    Object.keys(noop).forEach((eventName) => {
+    Object.keys(noop).forEach(eventName => {
       this.clearEvents(graphical, eventName as EventName)
     })
   }
@@ -151,7 +183,7 @@ export class CanvasEngine {
     const selfEventSet = noop[eventType]
     const eventSet = this.eventsMap.get(eventType)
     if (!selfEventSet || !eventSet) return
-    selfEventSet.forEach((fn) => {
+    selfEventSet.forEach(fn => {
       eventSet.delete(fn)
     })
   }
@@ -159,13 +191,14 @@ export class CanvasEngine {
   public reload() {
     this.clearView()
     this.sortRenderQueue()
-    this.renderQueue.forEach((render) => {
+    this.renderQueue.forEach(render => {
       render.graphical.render(this, render.options)
     })
   }
 
   public clearView() {
-    this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
+    const { canvasWidth, canvasHeight } = this.canvasDomInfo
+    this.ctx.clearRect(0, 0, canvasWidth, canvasHeight)
   }
 
   public modifyShapeLayer(graphical: Rect, zIndex: number) {

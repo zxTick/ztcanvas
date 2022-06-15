@@ -11,11 +11,12 @@ export interface ActOptions {
 }
 
 export class Act {
-  path2D: Path2D = new Path2D()
-  id = Symbol('Act')
+  private path2D: Path2D = new Path2D()
+  id = Symbol()
   figureInformation!: ActShape
   noop: Noop = {}
-  zIndex = -1
+  zIndex: number = -1
+  shape: string = 'Act'
   constructor(options: ActOptions) {
     this.injectFigureInformation(options)
     this.machiningGraphics(options)

@@ -14,10 +14,11 @@ export interface RectOptions {
 
 export class Rect {
   path2D: Path2D = new Path2D()
-  id = Symbol('Rect')
+  id = Symbol()
   figureInformation!: RectShape
   noop: Noop = {}
   zIndex = -1
+  shape: string = 'Rect'
   constructor(options: RectOptions) {
     this.machiningGraphics(options)
     this.injectFigureInformation(options)
@@ -38,7 +39,7 @@ export class Rect {
   private injectFigureInformation(options: RectOptions) {
     this.figureInformation = {
       ...options,
-      shape: ShapeType.Rect,
+      shape: ShapeType.Rect
     }
   }
 }

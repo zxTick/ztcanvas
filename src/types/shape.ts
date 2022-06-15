@@ -38,4 +38,5 @@ export interface LineShape extends baseShape {
   thickness: number
   zIndex: number
   track: { x: number; y: number }[]
+  lineWidth?: number
 }
