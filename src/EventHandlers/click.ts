@@ -13,7 +13,7 @@ export class ClickEventHandler extends BaseEventHandler {
     const fn = (e: MouseEvent) => {
       const { clientX, clientY } = e
       const { leftOffset, topOffset } = this.engine.canvasDomInfo
-      const { renderMode } = shape.shapeInfo
+      const { renderMode = 'fill' } = shape.shapeInfo
       const api = getCanvasCheckApi(this.engine.ctx)
       let isIn = false
       const params = {

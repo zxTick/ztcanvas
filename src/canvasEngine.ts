@@ -1,7 +1,7 @@
+import { EventHandler } from './EventHandlers'
 import type { Rect } from './Shapes/rect'
 import type { EventFn, EventName } from './types/event'
 import type { baseShape } from './types/shape'
-import { ShapeType } from './types/shape'
 
 // todo
 // 移动元素
@@ -52,9 +52,12 @@ export class CanvasEngine {
   // 渲染队列
   private renderQueue: { graphical: Rect; options: RenderOptions }[] = []
 
+  private eventHandler
+
   constructor(public options: CanvasEngineProps) {
     this.rawCanvasDom = this.initCanvasSize(options)
     this.initCtx()
+    this.eventHandler = new EventHandler(this)
   }
 
   private initCanvasSize(options: CanvasEngineProps) {
@@ -112,56 +115,7 @@ export class CanvasEngine {
   }
 
   public addEventListener(graphical: Rect, eventType: EventName, fn: EventFn) {
-    let events: EventFn
-    switch (graphical.shapeInfo.shape) {
-      case ShapeType.Rect:
-      case ShapeType.Arc:
-        events = (e: any) => {
-          const { leftOffset, topOffset } = this.canvasDomInfo
-          const isHas = this.ctx.isPointInPath(
-            graphical.path2D,
-            (e as any).clientX - leftOffset,
-            (e as any).clientY - topOffset,
-          )
-          if (isHas) fn(e)
-        }
-        break
-      case ShapeType.Line:
-        events = (e: any) => {
-          const { leftOffset, topOffset } = this.canvasDomInfo
-          const isHas = this.ctx.isPointInStroke(
-            graphical.path2D,
-            (e as any).clientX - leftOffset,
-            (e as any).clientY - topOffset,
-          )
-          if (isHas) fn(e)
-        }
-        break
-    }
-
-    if (this.eventsMap.has(eventType)) {
-      const eventSet = this.eventsMap.get(eventType)
-      eventSet?.add(events)
-    }
-    else {
-      this.eventsMap.set(eventType, new Set([events]))
-      this.rawCanvasDom.addEventListener(eventType, (e) => {
-        const events = this.eventsMap.get(eventType)
-        events?.forEach((fn) => {
-          fn(e)
-        })
-      })
-    }
-
-    let eventsSet = graphical.events[eventType]
-    if (!eventsSet) eventsSet = graphical.events[eventType] = new Set()
-
-    eventsSet.add(events)
-
-    return () => {
-      const eventSet = this.eventsMap.get(eventType)
-      eventSet?.delete(events)
-    }
+    this.eventHandler.pushEvent(graphical, eventType, fn)
   }
 
   public clear(graphical: Rect) {

@@ -1,52 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
-      * {
-        padding: 0;
-        margin: 0;
-      }
-    </style>
-  </head>
 
-  <body>
-    <canvas id="canvas1" style="background-color: rgb(138, 138, 138)"></canvas>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+  </style>
+</head>
 
-    <script type="module">
-      import { CanvasEngine, Rect } from "../dist/index.mjs";
-      const engine = new CanvasEngine({
-        w: "600",
-        h: "600",
-        canvasTarget: "canvas1",
-      });
+<body>
+  <canvas id="canvas1" style="background-color: rgb(138, 138, 138)"></canvas>
 
-      const rect1 = new Rect({
-        x: 10,
-        y: 10,
-        w: 100,
-        h: 100,
-      });
-      engine.render(rect1, { color: "red" });
-      engine.addEventListener(rect1, "click", function (e) {
-        console.log(e);
-        console.log("成功点击1");
-      });
+  <script type="module">
+    import { CanvasEngine, Rect } from "../dist/index.mjs";
+    const engine = new CanvasEngine({
+      w: "600",
+      h: "600",
+      canvasTarget: "canvas1",
+    });
 
-      const rect2 = new Rect({
-        x: 100,
-        y: 100,
-        w: 100,
-        h: 100,
-      });
-      engine.render(rect2, { color: "#000" });
-      const stopEvent = engine.addEventListener(rect2, "click", function (e) {
-        engine.clear(rect2);
-        // engine.clearView()
-      });
-    </script>
-  </body>
+    const rect1 = new Rect({
+      x: 10,
+      y: 10,
+      w: 100,
+      h: 100,
+    });
+    engine.render(rect1, { color: "red" });
+    engine.addEventListener(rect1, "click", function (e) {
+      console.log(e);
+      console.log("成功点击1");
+    });
+
+    const rect2 = new Rect({
+      x: 100,
+      y: 100,
+      w: 100,
+      h: 100,
+    });
+    engine.render(rect2, { color: "#000" });
+      // const stopEvent = engine.addEventListener(rect2, "click", function (e) {
+      //   engine.clear(rect2);
+      //   // engine.clearView()
+      // });
+  </script>
+</body>
+
 </html>
