@@ -1,3 +1,6 @@
 {
-    "extends": "@alexzzz/eslint-config"
+  "extends": "@alexzzz/eslint-config",
+  "ignorePatterns": [
+    "**/playground/**"
+  ]
 }
