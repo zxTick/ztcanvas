@@ -34,14 +34,13 @@
         w: 600,
         h: 200,
       });
-      engine.fill(act, {
+      engine.render(act, {
         color: "red",
       });
-      engine.fill(sky, {
+      engine.render(sky, {
         color: "blue",
       });
-
-      engine.fill(di, {
+      engine.render(di, {
         color: "green",
       });
       const stopEvent = engine.addEventListener(di, "click", () => {

@@ -30,7 +30,7 @@
         w: 100,
         h: 100,
       });
-      engine.fill(rect1, { color: "red" });
+      engine.render(rect1, { color: "red" });
       engine.addEventListener(rect1, "click", function (e) {
         console.log(e);
         console.log("成功点击1");
@@ -42,7 +42,7 @@
         w: 100,
         h: 100,
       });
-      engine.fill(rect2, { color: "#000" });
+      engine.render(rect2, { color: "#000" });
       const stopEvent = engine.addEventListener(rect2, "click", function (e) {
         engine.clear(rect2);
         // engine.clearView()
