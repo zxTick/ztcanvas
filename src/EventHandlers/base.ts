@@ -1,13 +1,10 @@
 import type { CanvasEngine } from '../canvasEngine'
-import type { BaseShape } from '../Shapes/base'
-import type { EventFn, ValidEventType, baseShape } from '../types'
+import type { EventFn, ShapeClassType, ValidEventType } from '../types'
 
 export interface EventBase {
   shape: ShapeClassType
   handler: EventFn
 }
-
-export type ShapeClassType = BaseShape<baseShape, {}>
 
 /**
  * EventHandler 基类

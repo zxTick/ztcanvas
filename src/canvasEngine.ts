@@ -136,13 +136,7 @@ export class CanvasEngine {
   }
 
   public clearEvents(graphical: Rect, eventType: EventName) {
-    const { events } = graphical
-    const selfEventSet = events[eventType]
-    const eventSet = this.eventsMap.get(eventType)
-    if (!selfEventSet || !eventSet) return
-    selfEventSet.forEach((fn) => {
-      eventSet.delete(fn)
-    })
+    this.eventHandler.removeListener(graphical, eventType)
   }
 
   public reload() {

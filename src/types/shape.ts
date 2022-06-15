@@ -1,3 +1,5 @@
+import type { BaseShape } from '../Shapes/base'
+
 export enum ShapeType {
   Rect,
   Arc,
@@ -15,6 +17,8 @@ export interface baseShape {
   y: number
   renderMode?: 'fill' | 'stroke'
 }
+
+export type ShapeClassType = BaseShape<baseShape, {}>
 
 export interface RectShape extends baseShape, Size {}
 

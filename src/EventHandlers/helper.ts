@@ -14,6 +14,7 @@ export function getCanvasCheckApi(ctx: CanvasRenderingContext2D, renderMode: bas
 export function getHandlerByEvtName(engine: CanvasEngine, evtName: EventName) {
   const mapping = {
     click: new ClickEventHandler(engine),
+    dblclick: new ClickEventHandler(engine),
   }
   const instance = mapping[evtName]
   if (!instance)

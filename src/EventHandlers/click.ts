@@ -1,6 +1,5 @@
 import type { CanvasEngine } from '../canvasEngine'
-import type { EventFn, ValidEventType } from '../types'
-import type { ShapeClassType } from './base'
+import type { EventFn, ShapeClassType, ValidEventType } from '../types'
 import { BaseEventHandler } from './base'
 import { getCanvasCheckApi } from './helper'
 

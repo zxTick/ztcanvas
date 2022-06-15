@@ -44,10 +44,10 @@
       h: 100,
     });
     engine.render(rect2, { color: "#000" });
-      // const stopEvent = engine.addEventListener(rect2, "click", function (e) {
-      //   engine.clear(rect2);
-      //   // engine.clearView()
-      // });
+    const stopEvent = engine.addEventListener(rect2, "dblclick", function (e) {
+      engine.clear(rect1);
+      // engine.clearView()
+    });
   </script>
 </body>
 
