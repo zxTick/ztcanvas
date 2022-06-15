@@ -1,51 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <canvas id="canvas2" style="background: #ccc"></canvas>
-    <script type="module">
-      import { Act, CanvasEngine, Rect } from "../dist/index.mjs";
-      const engine = new CanvasEngine({
-        w: "600",
-        h: "600",
-        canvasTarget: "canvas2",
-      });
-      const act = new Act({
-        x: 100,
-        y: 100,
-        radius: 20,
-        zIndex: 10,
-      });
-      const sky = new Rect({
-        x: 0,
-        y: 0,
-        w: 600,
-        h: 400,
-        zIndex: 9,
-      });
-      const di = new Rect({
-        x: 0,
-        y: 400,
-        w: 600,
-        h: 200,
-      });
-      engine.render(act, {
-        color: "red",
-      });
-      engine.render(sky, {
-        color: "blue",
-      });
-      engine.render(di, {
-        color: "green",
-      });
-      const stopEvent = engine.addEventListener(di, "click", () => {
-        engine.modifyShapeLayer(act, 7);
-      });
-    </script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
+
+<body>
+  <canvas id="canvas2" style="background: #ccc"></canvas>
+  <script type="module">
+    import { Arc, CanvasEngine, Rect } from "../dist/index.mjs";
+    const engine = new CanvasEngine({
+      w: "600",
+      h: "600",
+      canvasTarget: "canvas2",
+    });
+    const act = new Arc({
+      x: 100,
+      y: 100,
+      radius: 20,
+      zIndex: 10,
+    });
+    const sky = new Rect({
+      x: 0,
+      y: 0,
+      w: 600,
+      h: 400,
+      zIndex: 9,
+    });
+    const di = new Rect({
+      x: 0,
+      y: 400,
+      w: 600,
+      h: 200,
+    });
+    engine.render(act, {
+      color: "red",
+    });
+    engine.render(sky, {
+      color: "blue",
+    });
+    engine.render(di, {
+      color: "green",
+    });
+    const stopEvent = engine.addEventListener(di, "click", () => {
+      engine.modifyShapeLayer(act, 7);
+    });
+  </script>
+</body>
+
 </html>
