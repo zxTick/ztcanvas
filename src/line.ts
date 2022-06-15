@@ -1,4 +1,5 @@
 import type { CanvasEngine, RenderOptions } from './canvasEngine'
+import { Noop } from './types'
 import type { LineShape } from './types/shape'
 import { ShapeType } from './types/shape'
 
@@ -7,15 +8,27 @@ export interface LineOptions {
   y: number
   thickness?: number
   zIndex?: number
+  lineWidth?: number
 }
 
 export class Line {
   figureInformation = {} as LineShape
+  path2D: Path2D = new Path2D()
+  id = Symbol()
+  noop: Noop = {}
+  zIndex = -1
+  shape: string = 'Line'
   constructor(options: LineOptions) {
     this.injectFigureInformation(options)
   }
 
-  injectFigureInformation({ x, y, thickness = 1, zIndex = -1 }: LineOptions) {
+  injectFigureInformation({
+    x,
+    y,
+    thickness = 1,
+    zIndex = -1,
+    lineWidth
+  }: LineOptions) {
     this.figureInformation = {
       x,
       y,
@@ -24,6 +37,7 @@ export class Line {
       zIndex,
       shape: ShapeType.Line,
       track: [],
+      lineWidth
     }
   }
 
@@ -47,15 +61,15 @@ export class Line {
     const len = this.figureInformation.track.length
     for (let i = 0; i < len; i++) {
       const { x, y } = this.figureInformation.track[i]
-      engine.ctx.lineTo(x, y)
+      this.path2D.lineTo(x, y)
     }
+    engine.ctx.lineWidth = this.figureInformation.lineWidth || 1
     if (mode === 'fill') {
       engine.ctx.fillStyle = color
-      engine.ctx.fill()
-    }
-    else if (mode === 'stroke') {
+      engine.ctx.fill(this.path2D)
+    } else if (mode === 'stroke') {
       engine.ctx.strokeStyle = color
-      engine.ctx.stroke()
+      engine.ctx.stroke(this.path2D)
     }
 
     engine.ctx.closePath()
