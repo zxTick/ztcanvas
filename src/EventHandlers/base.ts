@@ -1,6 +1,6 @@
 import type { CanvasEngine } from '../canvasEngine'
 import type { BaseShape } from '../Shapes/base'
-import type { EventFn, ShapeType, ValidEventType, baseShape } from '../types'
+import type { EventFn, ValidEventType, baseShape } from '../types'
 
 export interface EventBase {
   shape: ShapeClassType
@@ -13,12 +13,10 @@ export type ShapeClassType = BaseShape<baseShape, {}>
  * EventHandler 基类
  */
 export abstract class BaseEventHandler {
-  graphical: ShapeType
   engine: CanvasEngine
   events: EventBase[] = []
-  constructor(engine: CanvasEngine, graphical: ShapeType) {
+  constructor(engine: CanvasEngine) {
     this.engine = engine
-    this.graphical = graphical
   }
   /**
    * 收集事件处理函数

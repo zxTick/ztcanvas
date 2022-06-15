@@ -1,12 +1,12 @@
 import type { CanvasEngine } from '../canvasEngine'
-import type { EventFn, ShapeType, ValidEventType } from '../types'
+import type { EventFn, ValidEventType } from '../types'
 import type { ShapeClassType } from './base'
 import { BaseEventHandler } from './base'
 import { getCanvasCheckApi } from './helper'
 
 export class ClickEventHandler extends BaseEventHandler {
-  constructor(engine: CanvasEngine, graphical: ShapeType) {
-    super(engine, graphical)
+  constructor(engine: CanvasEngine) {
+    super(engine)
   }
 
   track(shape: ShapeClassType, cbFn: EventFn): boolean {
