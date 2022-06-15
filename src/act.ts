@@ -9,7 +9,6 @@ export interface ActOptions {
   radius: number
   zIndex: number
 }
-
 export class Act {
   path2D: Path2D = new Path2D()
   id = Symbol('Act')

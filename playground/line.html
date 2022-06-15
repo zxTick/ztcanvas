@@ -1,31 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <canvas id="canvas" style="background-color: #ccc"></canvas>
-  <script type="module">
-    import { CanvasEngine, Line } from '../dist/index.mjs'
-    const engine = new CanvasEngine({
-      w: 300,
-      h: 300,
-      target: '#canvas',
-    })
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <canvas id="canvas" style="background-color: #ccc"></canvas>
+    <script type="module">
+      import { CanvasEngine, Line } from "../dist/index.mjs";
+      const engine = new CanvasEngine({
+        w: 300,
+        h: 300,
+        target: "#canvas",
+      });
 
-    const line = new Line({
-      x: 10,
-      y: 10,
-    })
+      const line = new Line({
+        x: 10,
+        y: 10,
+      });
 
-    line.move(100, 75).move(100, 25).move(-200, -25).move(129, 290)
-    engine.render(line, {
-      color: 'red',
-      mode: 'stroke',
-    })
-  </script>
-</body>
+      line.move(100, 75).move(100, 25).move(-200, -25).move(129, 290);
+      engine.render(line, {
+        color: "red",
+        mode: "fill",
+      });
+      engine.addEventListener(line, "click", () => {
+        alert(1);
+      });
+    </script>
+  </body>
 </html>

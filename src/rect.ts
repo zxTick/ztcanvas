@@ -6,7 +6,6 @@ import { ShapeType } from './types/shape'
 export interface RectOptions {
   x: number
   y: number
-  shape: ''
   w: number
   h: number
   zIndex: number

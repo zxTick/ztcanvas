@@ -1,6 +1,6 @@
 {
-  "name": "canvas-engine",
-  "version": "1.0.0",
+  "name": "zt-canvas",
+  "version": "1.0.1",
   "description": "",
   "type": "module",
   "scripts": {
@@ -10,6 +10,9 @@
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
