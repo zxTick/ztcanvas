@@ -13,11 +13,31 @@ export interface ArcOptions {
 export class Arc extends BaseShape<ArcShape, ArcOptions> {
   id = Symbol('Arc')
   shapeInfo = {} as ArcShape
-  constructor(options: ArcOptions) {
+
+  constructor(x: number, y: number, radius: number, zIndex: number)
+  constructor(options: ArcOptions)
+  constructor(
+    options: ArcOptions | number,
+    y?: number,
+    radius?: number,
+    zIndex?: number,
+  ) {
     super()
-    this.injectShapeInfo(options)
-    this.machiningGraphics(options)
-    this.zIndex = options.zIndex || -1
+    let op: ArcOptions
+    if (typeof options === 'object') {
+      op = options
+    }
+    else if (typeof options === 'number') {
+      op = {
+        x: options,
+        y: y!,
+        radius: radius!,
+        zIndex: zIndex!,
+      }
+    }
+    this.injectShapeInfo(op!)
+    this.machiningGraphics(op!)
+    this.zIndex = op!.zIndex || -1
   }
 
   machiningGraphics(options: ArcOptions) {
