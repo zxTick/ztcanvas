@@ -1,6 +1,6 @@
 # ZTCanvas
 
-a framework to help you build your canvas library easily
+a lightweight but powerful Canvas Engine
 
 you can click 👇 to access our docs
 
