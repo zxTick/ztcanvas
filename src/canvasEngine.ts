@@ -1,7 +1,8 @@
 import { EventHandler } from './EventHandlers'
+import type { BaseShape } from './Shapes/base'
 import type { Rect } from './Shapes/rect'
 import type { EventFn, EventName } from './types/event'
-import type { baseShape } from './types/shape'
+import type { ShapeClassType } from './types/shape'
 
 // todo
 // 移动元素
@@ -16,7 +17,7 @@ export interface CanvasEngineProps {
 export interface DrawDependencyGraphMap {
   id: symbol
   path2D: Path2D
-  shapeInfo: baseShape
+  shapeInfo: BaseShape<unknown, unknown>
 }
 
 export interface RenderOptions {
@@ -40,8 +41,7 @@ export class CanvasEngine {
   }
 
   // 绘画图
-  private drawDependencyGraphsMap: Map<symbol, DrawDependencyGraphMap>
-    = new Map()
+  private drawDependencyGraphsMap: Map<symbol, ShapeClassType> = new Map()
 
   // canvas dom
   private rawCanvasDom: HTMLCanvasElement
@@ -50,7 +50,10 @@ export class CanvasEngine {
   // 事件map
   public eventsMap: Map<string, Set<EventFn>> = new Map()
   // 渲染队列
-  private renderQueue: { graphical: Rect; options: RenderOptions }[] = []
+  private renderQueue: {
+    graphical: BaseShape<unknown, unknown>
+    options: RenderOptions
+  }[] = []
 
   private eventHandler
 
@@ -103,7 +106,11 @@ export class CanvasEngine {
     return this.rawCanvasDom
   }
 
-  public render(graphical: Rect, options: RenderOptions, isReload = false) {
+  public render(
+    graphical: ShapeClassType,
+    options: RenderOptions,
+    isReload = false,
+  ) {
     if (!isReload) {
       this.drawDependencyGraphsMap.set(graphical.id, graphical)
       this.renderQueue.push({
@@ -114,11 +121,15 @@ export class CanvasEngine {
     }
   }
 
-  public addEventListener(graphical: Rect, eventType: EventName, fn: EventFn) {
+  public addEventListener(
+    graphical: ShapeClassType,
+    eventType: EventName,
+    fn: EventFn,
+  ) {
     this.eventHandler.pushEvent(graphical, eventType, fn)
   }
 
-  public clear(graphical: Rect) {
+  public clear(graphical: ShapeClassType) {
     const index = this.renderQueue.findIndex(
       it => it.graphical.id === graphical.id,
     )
@@ -128,14 +139,14 @@ export class CanvasEngine {
     this.reload()
   }
 
-  public emptyEvents(graphical: Rect) {
+  public emptyEvents(graphical: ShapeClassType) {
     const { events } = graphical
     Object.keys(events).forEach((eventName) => {
       this.clearEvents(graphical, eventName as EventName)
     })
   }
 
-  public clearEvents(graphical: Rect, eventType: EventName) {
+  public clearEvents(graphical: ShapeClassType, eventType: EventName) {
     this.eventHandler.removeListener(graphical, eventType)
   }
 
