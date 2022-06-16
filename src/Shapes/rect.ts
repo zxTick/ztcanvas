@@ -14,10 +14,32 @@ export interface RectOptions {
 export class Rect extends BaseShape<RectShape, RectOptions> {
   shapeInfo = {} as RectShape
   id = Symbol('Rect')
-  constructor(options: RectOptions) {
+
+  constructor(x: number, y: number, w: number, h: number, zIndex: number)
+  constructor(options: RectOptions)
+  constructor(
+    options: RectOptions | number,
+    y?: number,
+    w?: number,
+    h?: number,
+    zIndex?: number,
+  ) {
     super()
-    this.injectShapeInfo(options)
-    this.machiningGraphics(options)
+    let op: RectOptions
+    if (typeof options === 'number') {
+      op = {
+        x: options,
+        y: y!,
+        w: w!,
+        h: h!,
+        zIndex: zIndex!,
+      }
+    }
+    else {
+      op = options
+    }
+    this.injectShapeInfo(op)
+    this.machiningGraphics(op)
   }
 
   protected machiningGraphics(options: RectOptions) {
