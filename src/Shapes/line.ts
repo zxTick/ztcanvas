@@ -14,20 +14,44 @@ export interface LineOptions {
 export class Line extends BaseShape<LineShape, LineOptions> {
   id = Symbol('Line')
   shapeInfo = {} as LineShape
-  constructor(options: LineOptions) {
+
+  constructor(
+    x: number,
+    y: number,
+    thickness?: number,
+    lineWidth?: number,
+    zIndex?: number
+  )
+
+  constructor(options: LineOptions)
+  constructor(
+    options: LineOptions | number,
+    y?: number,
+    thickness?: number,
+    lineWidth?: number,
+    zIndex?: number,
+  ) {
     super()
-    this.injectShapeInfo(options)
+    let op: LineOptions
+    if (typeof options === 'number') {
+      op = {
+        x: options,
+        y: y!,
+        thickness,
+        lineWidth,
+        zIndex,
+      }
+    }
+    else {
+      op = options
+    }
+    this.injectShapeInfo(op)
   }
 
-  machiningGraphics(_: LineOptions) { }
+  machiningGraphics(_: LineOptions) {}
 
   injectShapeInfo(options: LineOptions) {
-    const {
-      x,
-      y,
-      zIndex = -1,
-      lineWidth,
-    } = options
+    const { x, y, zIndex = -1, lineWidth } = options
     this.shapeInfo = {
       x,
       y,
