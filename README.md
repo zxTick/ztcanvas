@@ -1,4 +1,4 @@
-# Canvas Engine
+# ZTCanvas
 
 a framework to help you build your canvas library easily
 
