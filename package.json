@@ -1,19 +1,22 @@
 {
-  "name": "canvas-engine",
-  "version": "1.0.0",
-  "description": "",
+  "name": "ztcanvas",
   "type": "module",
+  "version": "0.9.1",
+  "description": "a framework to help you build your canvas library easily",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "unbuild",
     "stub": "unbuild --stub",
     "prepare": "husky install"
   },
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "nanoid": "^4.0.0",
     "unbuild": "^0.7.4"
