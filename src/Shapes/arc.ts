@@ -23,6 +23,18 @@ export class Arc extends BaseShape<ArcShape, ArcOptions> {
     zIndex?: number,
   ) {
     super()
+    const op = this.generateConfiguration(options, y, radius, zIndex)
+    this.injectShapeInfo(op)
+    this.machiningGraphics(op)
+    this.zIndex = op.zIndex || -1
+  }
+
+  generateConfiguration(
+    options: ArcOptions | number,
+    y?: number,
+    radius?: number,
+    zIndex?: number,
+  ) {
     let op: ArcOptions
     if (typeof options === 'object') {
       op = options
@@ -35,9 +47,7 @@ export class Arc extends BaseShape<ArcShape, ArcOptions> {
         zIndex: zIndex!,
       }
     }
-    this.injectShapeInfo(op!)
-    this.machiningGraphics(op!)
-    this.zIndex = op!.zIndex || -1
+    return op!
   }
 
   machiningGraphics(options: ArcOptions) {

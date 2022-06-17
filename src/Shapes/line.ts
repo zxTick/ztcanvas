@@ -22,7 +22,6 @@ export class Line extends BaseShape<LineShape, LineOptions> {
     lineWidth?: number,
     zIndex?: number
   )
-
   constructor(options: LineOptions)
   constructor(
     options: LineOptions | number,
@@ -32,6 +31,23 @@ export class Line extends BaseShape<LineShape, LineOptions> {
     zIndex?: number,
   ) {
     super()
+    const op = this.generateConfiguration(
+      options,
+      y,
+      thickness,
+      lineWidth,
+      zIndex,
+    )
+    this.injectShapeInfo(op)
+  }
+
+  generateConfiguration(
+    options: LineOptions | number,
+    y?: number,
+    thickness?: number,
+    lineWidth?: number,
+    zIndex?: number,
+  ) {
     let op: LineOptions
     if (typeof options === 'number') {
       op = {
@@ -45,7 +61,8 @@ export class Line extends BaseShape<LineShape, LineOptions> {
     else {
       op = options
     }
-    this.injectShapeInfo(op)
+
+    return op
   }
 
   machiningGraphics(_: LineOptions) {}
