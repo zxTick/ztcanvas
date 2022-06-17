@@ -26,7 +26,7 @@ export class EventHandler {
         })
       }
       eventSet[ownListener] = listener
-      this.addDomListener(this.engine.canvasDOM, eventName, listener)
+      this.addDomListener(this.engine.getCanvasDom(), eventName, listener)
     }
     const handlerInstance = this.getFn(eventName, shape, cbFn)
     const event = handlerInstance.execute.bind(handlerInstance)
@@ -48,7 +48,7 @@ export class EventHandler {
   clearAll() {
     this.eventMap.forEach((eventSet, eventName) => {
       eventSet.forEach((evt) => {
-        this.engine.canvasDOM.removeEventListener(eventName, evt as NormalEventHandlerFn)
+        this.engine.getCanvasDom().removeEventListener(eventName, evt as NormalEventHandlerFn)
       })
     })
   }
@@ -63,7 +63,7 @@ export class EventHandler {
     })
     if (eventSet.size === 0) {
       this.eventMap.delete(evtName)
-      this.engine.canvasDOM.removeEventListener(evtName, listener as NormalEventHandlerFn)
+      this.engine.getCanvasDom().removeEventListener(evtName, listener as NormalEventHandlerFn)
     }
   }
 
