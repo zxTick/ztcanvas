@@ -16,7 +16,11 @@
     "build": "unbuild",
     "stub": "unbuild --stub",
     "prepare": "husky install",
-    "test": "vitest"
+    "test": "vitest",
+    "prepublishOnly": "npm run build",
+    "release": "bumpp && npm publish",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "nanoid": "^4.0.0",
@@ -24,9 +28,11 @@
   },
   "devDependencies": {
     "@alexzzz/eslint-config": "^1.3.0",
+    "bumpp": "^8.2.0",
     "eslint": "^8.17.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.1",
+    "typescript": "^4.7.3",
     "unplugin-auto-import": "^0.8.8",
     "vitest": "^0.15.1"
   }
