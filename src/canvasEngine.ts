@@ -167,8 +167,4 @@ export class CanvasEngine {
     graphical.zIndex = zIndex
     this.reload()
   }
-
-  get canvasDOM() {
-    return this.rawCanvasDom
-  }
 }
