@@ -72,8 +72,9 @@ export class Rect extends BaseShape<RectShape, RectOptions> {
   }
 
   render(canvasEngine: CanvasEngine, options: RenderOptions) {
-    const { color } = options
+    const { options: { color }, cb } = options
     canvasEngine.ctx.fillStyle = color || ''
     canvasEngine.ctx.fill(this.path2D)
+    cb()
   }
 }

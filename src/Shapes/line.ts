@@ -65,7 +65,7 @@ export class Line extends BaseShape<LineShape, LineOptions> {
     return op
   }
 
-  machiningGraphics(_: LineOptions) {}
+  machiningGraphics(_: LineOptions) { }
 
   injectShapeInfo(options: LineOptions) {
     const { x, y, zIndex = -1, lineWidth } = options
@@ -89,7 +89,7 @@ export class Line extends BaseShape<LineShape, LineOptions> {
     return this
   }
 
-  render(engine: CanvasEngine, { color = '', mode = 'fill' }: RenderOptions) {
+  render(engine: CanvasEngine, { options: { color = '', mode = 'fill' }, cb }: RenderOptions) {
     engine.ctx.beginPath()
     const len = this.shapeInfo.track.length
     for (let i = 0; i < len; i++) {
@@ -108,5 +108,6 @@ export class Line extends BaseShape<LineShape, LineOptions> {
 
     this.shapeInfo.renderMode = mode
     engine.ctx.closePath()
+    cb()
   }
 }
