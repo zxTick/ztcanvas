@@ -44,7 +44,7 @@ export class CanvasEngine {
   private drawDependencyGraphsMap: Map<symbol, ShapeClassType> = new Map()
 
   // canvas dom
-  private rawCanvasDom: HTMLCanvasElement
+  private rawCanvasDom!: HTMLCanvasElement
   // canvas ctx
   public ctx!: CanvasRenderingContext2D
   // 事件map
@@ -58,7 +58,7 @@ export class CanvasEngine {
   private eventHandler
 
   constructor(public options: CanvasEngineProps) {
-    this.rawCanvasDom = this.initCanvasSize(options)
+    this.initCanvasSize(options)
     this.initCtx()
     this.eventHandler = new EventHandler(this)
   }
@@ -76,13 +76,12 @@ export class CanvasEngine {
     else {
       throw new Error('请选择正确的 canvas id 获取dom元素')
     }
+    this.rawCanvasDom = canvasDom
     this.initCanvasDomInfo(options, canvasDom)
-    return canvasDom
   }
 
   private initCanvasDomInfo(options: CanvasEngineProps, _: HTMLCanvasElement) {
     const { w, h } = options
-
     this.canvasDomInfo.canvasWidth = Number(w || '500')
     this.canvasDomInfo.canvasHeight = Number(h || '500')
     this.updateCanvasOffset()
