@@ -21,8 +21,11 @@ export interface DrawDependencyGraphMap {
 }
 
 export interface RenderOptions {
-  color?: string
-  mode?: 'fill' | 'stroke'
+  options: {
+    color?: string
+    mode?: 'fill' | 'stroke'
+  }
+  cb: (...args: any[]) => unknown
 }
 
 export interface CanvasDomInfo {
@@ -31,6 +34,8 @@ export interface CanvasDomInfo {
   leftOffset: number
   topOffset: number
 }
+
+let isRender = false
 
 export class CanvasEngine {
   private maxZIndex = -1
@@ -118,13 +123,15 @@ export class CanvasEngine {
     return this.rawCanvasDom
   }
 
-  public render(graphical: ShapeClassType, options: RenderOptions) {
+  public render(graphical: ShapeClassType, options: RenderOptions['options'], cb: RenderOptions['cb'] = () => { }) {
     this.drawDependencyGraphsMap.set(graphical.id, graphical)
     this.renderQueue.push({
       graphical,
-      options,
+      options: {
+        options,
+        cb,
+      },
     })
-    this.reload()
   }
 
   public addEventListener(
@@ -142,7 +149,7 @@ export class CanvasEngine {
     if (index === -1) return
     this.renderQueue.splice(index, 1)
     this.emptyEvents(graphical)
-    this.reload()
+    this.runRenderTask()
   }
 
   public emptyEvents(graphical: ShapeClassType) {
@@ -168,6 +175,16 @@ export class CanvasEngine {
 
   public modifyShapeLayer(graphical: Rect, zIndex: number) {
     graphical.zIndex = zIndex
-    this.reload()
+    this.runRenderTask()
+  }
+
+  private runRenderTask() {
+    if (!isRender) {
+      isRender = true
+      Promise.resolve().then(() => {
+        this.reload()
+        isRender = false
+      })
+    }
   }
 }

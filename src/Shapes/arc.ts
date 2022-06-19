@@ -56,9 +56,10 @@ export class Arc extends BaseShape<ArcShape, ArcOptions> {
   }
 
   render(canvasEngine: CanvasEngine, opt: RenderOptions) {
-    const { color } = opt
+    const { options: { color }, cb } = opt
     canvasEngine.ctx.fillStyle = color || ''
     canvasEngine.ctx.fill(this.path2D)
+    cb()
   }
 
   injectShapeInfo(options: ArcOptions) {
