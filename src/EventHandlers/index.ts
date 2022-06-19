@@ -1,96 +1,50 @@
 import type { CanvasEngine } from '../canvasEngine'
 import type {
   EventFn,
-  EventHandlerFn,
   EventName,
-  NormalEventHandlerFn,
   ShapeClassType,
-  ValidEventType,
 } from '../types'
-import { getHandlerByEvtName } from './helper'
+import type { BaseEventHandler } from './base'
+import { ClickEventHandler } from './click'
 
-const ownListener = Symbol('ownListener')
-
-type EventTrack = ((e: MouseEvent, shape: ShapeClassType) => boolean) & {
-  shape?: ShapeClassType
+type HandlerInstanceCache = {
+  [key in EventName]: BaseEventHandler
 }
 
-type SetWithListener = Set<EventHandlerFn> & {
-  [ownListener]?: (e: ValidEventType) => void
-}
 export class EventHandler {
   engine: CanvasEngine
-  eventMap: Map<EventName, SetWithListener> = new Map()
+  handlerInstances!: HandlerInstanceCache
+
   constructor(engine: CanvasEngine) {
     this.engine = engine
+    this.initHandlerInstance(this.engine)
+  }
+
+  initHandlerInstance(engine: CanvasEngine) {
+    this.handlerInstances = {
+      click: new ClickEventHandler(engine),
+      dblclick: new ClickEventHandler(engine),
+    }
   }
 
   pushEvent(shape: ShapeClassType, eventName: EventName, cbFn: EventFn) {
-    let eventSet = this.eventMap.get(eventName)
-    if (!this.eventMap.has(eventName)) {
-      this.eventMap.set(eventName, (eventSet = new Set()))
-      const listener = (e: ValidEventType) => {
-        const evtSet = this.eventMap.get(eventName)
-        evtSet?.forEach((evt) => {
-          const { shape } = evt as EventTrack
-
-          evt(e, shape!)
-        })
-      }
-      eventSet[ownListener] = listener
-      this.addDomListener(this.engine.getCanvasDom(), eventName, listener)
-    }
-    const handlerInstance = this.getFn(eventName, shape, cbFn)
-    const event = handlerInstance.execute.bind(handlerInstance) as EventTrack
-    event.shape = shape
-    eventSet?.add(event)
-
+    const handlerInstance = this.handlerInstances[eventName]
+    handlerInstance.track(shape, cbFn)
     // 让 shape 也存在此 listener 的缓存
     let shapeEvents = shape.events[eventName]
     if (!shapeEvents) shapeEvents = shape.events[eventName] = new Set()
-    shapeEvents.add(event)
+    shapeEvents.add(cbFn)
     return () => {
-      eventSet?.delete(event)
+      handlerInstance.removeListener(cbFn)
     }
   }
 
-  private addDomListener(
-    dom: HTMLElement,
-    eventName: EventName,
-    cbFn: EventHandlerFn,
-  ) {
-    dom.addEventListener(eventName, cbFn as NormalEventHandlerFn)
-  }
-
-  clearAll() {
-    this.eventMap.forEach((eventSet, eventName) => {
-      eventSet.forEach((evt) => {
-        this.engine
-          .getCanvasDom()
-          .removeEventListener(eventName, evt as NormalEventHandlerFn)
-      })
-    })
-  }
-
-  removeListener(shape: ShapeClassType, evtName: EventName) {
-    const eventHandlers = shape.events[evtName]
-    const eventSet = this.eventMap.get(evtName)
+  removeListener(shape: ShapeClassType, evtName: EventName): void {
+    const eventSet = shape.events[evtName]
     if (!eventSet) return
-    const listener = eventSet[ownListener]
-    eventHandlers.forEach((item) => {
-      eventSet?.delete(item)
-    })
-    if (eventSet.size === 0) {
-      this.eventMap.delete(evtName)
-      this.engine
-        .getCanvasDom()
-        .removeEventListener(evtName, listener as NormalEventHandlerFn)
-    }
-  }
-
-  private getFn(eventName: EventName, shape: ShapeClassType, cbFn: EventFn) {
-    const handlerInstance = getHandlerByEvtName(this.engine, eventName)
-    handlerInstance.track(shape, cbFn)
-    return handlerInstance
+    const handlerInstance = this.handlerInstances[evtName]
+    handlerInstance.events = handlerInstance.events.filter(e => e.shape.id === shape.id)
+    eventSet.clear()
+    handlerInstance.checkEmpty()
   }
 }
