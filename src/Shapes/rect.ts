@@ -14,7 +14,6 @@ export interface RectOptions {
 export class Rect extends BaseShape<RectShape, RectOptions> {
   shapeInfo = {} as RectShape
   id = Symbol('Rect')
-
   constructor(x: number, y: number, w: number, h: number, zIndex: number)
   constructor(options: RectOptions)
   constructor(
@@ -65,6 +64,7 @@ export class Rect extends BaseShape<RectShape, RectOptions> {
   }
 
   protected injectShapeInfo(info: RectOptions) {
+    this.zIndex = info.zIndex
     this.shapeInfo = {
       ...info,
       shape: ShapeType.Rect,
