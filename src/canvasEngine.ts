@@ -80,14 +80,16 @@ export class CanvasEngine {
     return canvasDom
   }
 
-  private initCanvasDomInfo(
-    options: CanvasEngineProps,
-    canvasDom: HTMLCanvasElement,
-  ) {
+  private initCanvasDomInfo(options: CanvasEngineProps, _: HTMLCanvasElement) {
     const { w, h } = options
-    const { left, top } = canvasDom.getClientRects()[0]
+
     this.canvasDomInfo.canvasWidth = Number(w || '500')
     this.canvasDomInfo.canvasHeight = Number(h || '500')
+    this.updateCanvasOffset()
+  }
+
+  public updateCanvasOffset() {
+    const { left, top } = this.rawCanvasDom.getClientRects()[0]
     this.canvasDomInfo.leftOffset = left
     this.canvasDomInfo.topOffset = top
   }
@@ -102,23 +104,25 @@ export class CanvasEngine {
     this.ctx = this.rawCanvasDom.getContext('2d') as CanvasRenderingContext2D
   }
 
+  private renderingQueue() {
+    this.sortRenderQueue()
+    this.renderQueue.forEach((render) => {
+      render.graphical.beforeRender(this, render.options)
+      render.graphical.render(this, render.options)
+    })
+  }
+
   public getCanvasDom(): HTMLCanvasElement {
     return this.rawCanvasDom
   }
 
-  public render(
-    graphical: ShapeClassType,
-    options: RenderOptions,
-    isReload = false,
-  ) {
-    if (!isReload) {
-      this.drawDependencyGraphsMap.set(graphical.id, graphical)
-      this.renderQueue.push({
-        graphical,
-        options,
-      })
-      this.reload()
-    }
+  public render(graphical: ShapeClassType, options: RenderOptions) {
+    this.drawDependencyGraphsMap.set(graphical.id, graphical)
+    this.renderQueue.push({
+      graphical,
+      options,
+    })
+    this.reload()
   }
 
   public addEventListener(
@@ -152,10 +156,7 @@ export class CanvasEngine {
 
   public reload() {
     this.clearView()
-    this.sortRenderQueue()
-    this.renderQueue.forEach((render) => {
-      render.graphical.render(this, render.options)
-    })
+    this.renderingQueue()
   }
 
   public clearView() {

@@ -10,6 +10,7 @@ export class ClickEventHandler extends BaseEventHandler {
 
   track(shape: ShapeClassType, cbFn: EventFn): boolean {
     const fn = (e: MouseEvent) => {
+      this.engine.updateCanvasOffset()
       const { clientX, clientY } = e
       const { leftOffset, topOffset } = this.engine.canvasDomInfo
       const { renderMode = 'fill' } = shape.shapeInfo
@@ -19,10 +20,8 @@ export class ClickEventHandler extends BaseEventHandler {
         x: clientX - leftOffset,
         y: clientY - topOffset,
       }
-      if (renderMode === 'fill')
-        isIn = api(shape.path2D, params.x, params.y)
-      else if (renderMode === 'stroke')
-        isIn = api(params.x, params.y)
+      if (renderMode === 'fill') isIn = api(shape.path2D, params.x, params.y)
+      else if (renderMode === 'stroke') isIn = api(params.x, params.y)
 
       if (isIn) cbFn(e)
     }
