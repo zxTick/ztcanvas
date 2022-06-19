@@ -25,9 +25,15 @@ export class Rect extends BaseShape<RectShape, RectOptions> {
     zIndex?: number,
   ) {
     super()
-    const op = this.generateConfiguration(options, y, w, h, zIndex)
-    this.injectShapeInfo(op)
-    this.machiningGraphics(op)
+    const completeConfiguration = this.generateConfiguration(
+      options,
+      y,
+      w,
+      h,
+      zIndex,
+    )
+    this.injectShapeInfo(completeConfiguration)
+    this.machiningGraphics(completeConfiguration)
   }
 
   generateConfiguration(
@@ -37,9 +43,12 @@ export class Rect extends BaseShape<RectShape, RectOptions> {
     h?: number,
     zIndex?: number,
   ) {
-    let op: RectOptions
-    if (typeof options === 'number') {
-      op = {
+    let completeConfiguration: RectOptions
+    if (typeof options === 'object') {
+      completeConfiguration = options
+    }
+    else {
+      completeConfiguration = {
         x: options,
         y: y!,
         w: w!,
@@ -47,10 +56,7 @@ export class Rect extends BaseShape<RectShape, RectOptions> {
         zIndex: zIndex!,
       }
     }
-    else {
-      op = options
-    }
-    return op
+    return completeConfiguration
   }
 
   protected machiningGraphics(options: RectOptions) {

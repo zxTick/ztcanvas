@@ -21,6 +21,7 @@ export class EventHandler {
       this.eventMap.set(eventName, (eventSet = new Set()))
       listener = (e: ValidEventType) => {
         const evtSet = this.eventMap.get(eventName)
+
         evtSet?.forEach((evt) => {
           evt(e, shape)
         })
