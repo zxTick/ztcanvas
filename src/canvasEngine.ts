@@ -33,6 +33,8 @@ export interface CanvasDomInfo {
 }
 
 export class CanvasEngine {
+  private maxZIndex = -1
+
   public canvasDomInfo: CanvasDomInfo = {
     canvasHeight: 0,
     canvasWidth: 0,
@@ -106,6 +108,7 @@ export class CanvasEngine {
   private renderingQueue() {
     this.sortRenderQueue()
     this.renderQueue.forEach((render) => {
+      render.graphical.innerZIndex = (++this.maxZIndex)
       render.graphical.beforeRender(this, render.options)
       render.graphical.render(this, render.options)
     })

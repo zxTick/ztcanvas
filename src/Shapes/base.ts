@@ -7,9 +7,11 @@ export abstract class BaseShape<S, T> {
   abstract shapeInfo: S
   zIndex = -1
   events = {} as Record<EventName, Set<EventHandlerFn>>
-  constructor() {}
+  // 内部需要用到的 zIndex
+  public innerZIndex = -1
+  constructor() { }
   protected abstract injectShapeInfo(info: T): void
   protected abstract machiningGraphics(info: T): void
   abstract render(canvasEngine: CanvasEngine, options: RenderOptions): void
-  beforeRender(_: CanvasEngine, __: RenderOptions): void {}
+  beforeRender(_: CanvasEngine, __: RenderOptions): void { }
 }
