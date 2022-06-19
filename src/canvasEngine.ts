@@ -132,6 +132,7 @@ export class CanvasEngine {
         cb,
       },
     })
+    this.runRenderTask()
   }
 
   public addEventListener(
