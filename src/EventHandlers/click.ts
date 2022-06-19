@@ -22,7 +22,6 @@ export class ClickEventHandler extends BaseEventHandler {
       }
       if (renderMode === 'fill') isIn = api(shape.path2D, params.x, params.y)
       else if (renderMode === 'stroke') isIn = api(params.x, params.y)
-
       if (isIn) cbFn(e)
     }
     this.events.push({
