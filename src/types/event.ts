@@ -9,9 +9,7 @@ export type ValidEventType = MouseEvent
 
 export type EventFn = (event: ValidEventType) => unknown
 
-export type Noop = {
-  [key in EventName]?: Set<EventFn>;
-}
+export type Noop = () => {}
 
 export type EventHandlerFn = (e: ValidEventType, shape: ShapeClassType) => void
 export type NormalEventHandlerFn = (ev: MouseEvent) => any

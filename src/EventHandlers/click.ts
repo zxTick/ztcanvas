@@ -1,15 +1,28 @@
 import type { CanvasEngine } from '../canvasEngine'
-import type { EventFn, ShapeClassType, ValidEventType } from '../types'
+import type { EventFn, ShapeClassType } from '../types'
+import { EventName } from '../types'
+import type { TriggerReturnType } from './base'
 import { BaseEventHandler } from './base'
 import { getCanvasCheckApi } from './helper'
 
 export class ClickEventHandler extends BaseEventHandler {
+  eventName = EventName.click
+
   constructor(engine: CanvasEngine) {
     super(engine)
   }
 
-  track(shape: ShapeClassType, cbFn: EventFn): boolean {
-    const fn = (e: MouseEvent) => {
+  track(shape: ShapeClassType, cbFn: EventFn): void {
+    if (!this.events.length) this.initDomEventListener()
+    const fn = this.trigger(shape, cbFn)
+    this.events.push({
+      shape,
+      handler: fn,
+    })
+  }
+
+  trigger(shape: ShapeClassType, cbFn: EventFn): TriggerReturnType {
+    return (e: MouseEvent) => {
       this.engine.updateCanvasOffset()
       const { clientX, clientY } = e
       const { leftOffset, topOffset } = this.engine.canvasDomInfo
@@ -22,19 +35,13 @@ export class ClickEventHandler extends BaseEventHandler {
       }
       if (renderMode === 'fill') isIn = api(shape.path2D, params.x, params.y)
       else if (renderMode === 'stroke') isIn = api(params.x, params.y)
-      if (isIn) cbFn(e)
+      if (isIn) {
+        return {
+          shape,
+          handler: cbFn.bind(cbFn, e),
+        }
+      }
+      else { return false }
     }
-    this.events.push({
-      shape,
-      handler: fn,
-    })
-    return true
-  }
-
-  execute(e: ValidEventType, shape: ShapeClassType): boolean {
-    const event = this.events.find(item => item.shape.id === shape.id)
-    if (!event) return false
-    event.handler(e)
-    return true
   }
 }
