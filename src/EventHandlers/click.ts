@@ -41,7 +41,9 @@ export class ClickEventHandler extends BaseEventHandler {
           handler: cbFn.bind(cbFn, e),
         }
       }
-      else { return false }
+      else {
+        return false
+      }
     }
   }
 }

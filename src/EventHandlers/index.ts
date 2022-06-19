@@ -43,7 +43,7 @@ export class EventHandler {
     const eventSet = shape.events[evtName]
     if (!eventSet) return
     const handlerInstance = this.handlerInstances[evtName]
-    handlerInstance.events = handlerInstance.events.filter(e => e.shape.id === shape.id)
+    handlerInstance.events = handlerInstance.events.filter(e => e.shape.id !== shape.id)
     eventSet.clear()
     handlerInstance.checkEmpty()
   }
