@@ -35,8 +35,6 @@ export interface CanvasDomInfo {
   topOffset: number
 }
 
-let isRender = false
-
 export class CanvasEngine {
   private maxZIndex = -1
 
@@ -61,6 +59,8 @@ export class CanvasEngine {
     graphical: BaseShape<unknown, unknown>
     options: RenderOptions
   }[] = []
+
+  isRender = false
 
   private eventHandler
 
@@ -113,7 +113,7 @@ export class CanvasEngine {
   private renderingQueue() {
     this.sortRenderQueue()
     this.renderQueue.forEach((render) => {
-      render.graphical.innerZIndex = (++this.maxZIndex)
+      render.graphical.innerZIndex = ++this.maxZIndex
       render.graphical.beforeRender(this, render.options)
       render.graphical.render(this, render.options)
     })
@@ -123,7 +123,11 @@ export class CanvasEngine {
     return this.rawCanvasDom
   }
 
-  public render(graphical: ShapeClassType, options: RenderOptions['options'], cb: RenderOptions['cb'] = () => { }) {
+  public render(
+    graphical: ShapeClassType,
+    options: RenderOptions['options'],
+    cb: RenderOptions['cb'] = () => {},
+  ) {
     this.drawDependencyGraphsMap.set(graphical.id, graphical)
     this.renderQueue.push({
       graphical,
@@ -180,11 +184,11 @@ export class CanvasEngine {
   }
 
   private runRenderTask() {
-    if (!isRender) {
-      isRender = true
+    if (!this.isRender) {
+      this.isRender = true
       Promise.resolve().then(() => {
         this.reload()
-        isRender = false
+        this.isRender = false
       })
     }
   }
