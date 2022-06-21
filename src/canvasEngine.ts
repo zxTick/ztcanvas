@@ -144,7 +144,7 @@ export class CanvasEngine {
     eventType: EventName,
     fn: EventFn,
   ) {
-    this.eventHandler.pushEvent(graphical, eventType, fn)
+    return this.eventHandler.pushEvent(graphical, eventType, fn)
   }
 
   public clear(graphical: ShapeClassType) {
