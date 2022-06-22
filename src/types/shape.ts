@@ -20,7 +20,17 @@ export interface baseShape {
 
 export type ShapeClassType = BaseShape<baseShape, {}>
 
-export interface RectShape extends baseShape, Size {}
+export interface Position {
+  x: number
+  y: number
+}
+
+export interface RectShape extends baseShape, Size {
+  leftCenter: Position
+  rightCenter: Position
+  bottomCenter: Position
+  topCenter: Position
+}
 
 /**
  * @param {number} x, y 圆心
@@ -28,6 +38,10 @@ export interface RectShape extends baseShape, Size {}
  */
 export interface ArcShape extends baseShape {
   radius: number
+  top: Position
+  left: Position
+  right: Position
+  bottom: Position
 }
 
 export interface LineShape extends baseShape {

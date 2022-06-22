@@ -1,5 +1,5 @@
 import type { CanvasEngine, RenderOptions } from '../canvasEngine'
-import type { RectShape } from '../types'
+import type { Position, RectShape } from '../types'
 import { ShapeType } from '../types'
 import { BaseShape } from './base'
 
@@ -64,15 +64,28 @@ export class Rect extends BaseShape<RectShape, RectOptions> {
   }
 
   protected injectShapeInfo(info: RectOptions) {
-    this.zIndex = info.zIndex
+    const { x, y, w, h, zIndex } = info
+    const topCenter: Position = { x: (x + w) / 2, y }
+    const bottomCenter: Position = { x: (x + w) / 2, y: y + h }
+    const leftCenter: Position = { x, y: (y + h) / 2 }
+    const rightCenter: Position = { x: x + w, y: (y + h) / 2 }
     this.shapeInfo = {
       ...info,
       shape: ShapeType.Rect,
+      topCenter,
+      bottomCenter,
+      leftCenter,
+      rightCenter,
     }
+
+    this.zIndex = zIndex
   }
 
   render(canvasEngine: CanvasEngine, options: RenderOptions) {
-    const { options: { color }, cb } = options
+    const {
+      options: { color },
+      cb,
+    } = options
     canvasEngine.ctx.fillStyle = color || ''
     canvasEngine.ctx.fill(this.path2D)
     cb()
