@@ -1,5 +1,5 @@
 import type { CanvasEngine, RenderOptions } from '../canvasEngine'
-import type { ArcShape } from '../types'
+import type { ArcShape, Position } from '../types'
 import { ShapeType } from '../types'
 import { BaseShape } from './base'
 
@@ -56,13 +56,40 @@ export class Arc extends BaseShape<ArcShape, ArcOptions> {
   }
 
   render(canvasEngine: CanvasEngine, opt: RenderOptions) {
-    const { options: { color }, cb } = opt
+    const {
+      options: { color },
+      cb,
+    } = opt
     canvasEngine.ctx.fillStyle = color || ''
     canvasEngine.ctx.fill(this.path2D)
     cb()
   }
 
   injectShapeInfo(options: ArcOptions) {
-    this.shapeInfo = { ...options, shape: ShapeType.Arc }
+    const { radius, x, y } = options
+    const top: Position = {
+      x,
+      y: y - radius,
+    }
+    const left = {
+      x: x - radius,
+      y,
+    }
+    const right: Position = {
+      x: x + radius,
+      y,
+    }
+    const bottom: Position = {
+      x,
+      y: y + radius,
+    }
+    this.shapeInfo = {
+      ...options,
+      shape: ShapeType.Arc,
+      top,
+      left,
+      right,
+      bottom,
+    }
   }
 }
