@@ -11,7 +11,7 @@ import type { ShapeClassType } from './types/shape'
 export interface CanvasEngineProps {
   w?: string
   h?: string
-  canvasTarget?: string
+  canvasTarget?: string | HTMLCanvasElement
 }
 
 export interface DrawDependencyGraphMap {
@@ -72,9 +72,11 @@ export class CanvasEngine {
 
   private initCanvasSize(options: CanvasEngineProps) {
     const { w, h, canvasTarget } = options
-    const canvasDom = document.getElementById(
-      canvasTarget || 'canvas',
-    ) as HTMLCanvasElement
+    const canvasDom = typeof canvasTarget === 'string'
+      ? (document.getElementById(
+          canvasTarget || 'canvas',
+        ) as HTMLCanvasElement)
+      : canvasTarget
 
     if (canvasDom) {
       canvasDom.setAttribute('width', w || '500')
