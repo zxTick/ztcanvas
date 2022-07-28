@@ -194,4 +194,8 @@ export class CanvasEngine {
       })
     }
   }
+
+  public getCtx() {
+    return this.ctx
+  }
 }
