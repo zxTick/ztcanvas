@@ -73,8 +73,8 @@ export class CanvasEngine {
   private initCanvasSize(options: CanvasEngineProps) {
     const { w, h, canvasTarget } = options
     const canvasDom = typeof canvasTarget === 'string'
-      ? (document.getElementById(
-          canvasTarget || 'canvas',
+      ? (document.querySelector(
+          canvasTarget || '#canvas',
         ) as HTMLCanvasElement)
       : canvasTarget
 
