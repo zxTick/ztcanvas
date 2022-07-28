@@ -1,7 +1,7 @@
 {
   "name": "ztcanvas",
   "type": "module",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "a framework to help you build your canvas library easily",
   "keywords": [],
   "license": "ISC",
