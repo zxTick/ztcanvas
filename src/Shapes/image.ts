@@ -63,8 +63,9 @@ export class Img extends BaseShape<RectShape, ImageCanvas> {
     return completeConfiguration
   }
 
-  protected machiningGraphics(_: ImageCanvas) {
-
+  protected machiningGraphics(options: ImageCanvas) {
+    const { x, y, w, h } = options
+    this.path2D.rect(x, y, w, h)
   }
 
   protected injectShapeInfo(info: ImageCanvas) {
@@ -90,6 +91,8 @@ export class Img extends BaseShape<RectShape, ImageCanvas> {
     const image = new Image(this.shapeInfo.w, this.shapeInfo.h)
     image.src = this.shapeInfo.src
     image.onload = () => {
+      canvasEngine.ctx.fillStyle = 'rgba(0,0,0,0)'
+      canvasEngine.ctx.fill(this.path2D)
       canvasEngine.ctx.drawImage(image, this.shapeInfo.x, this.shapeInfo.y, this.shapeInfo.w, this.shapeInfo.h)
     }
   }
